@@ -1,0 +1,21 @@
+library(multcomp)
+attach(cholesterol)
+table(trt)
+aggregate(response, by=list(trt), FUN=mean)
+aggregate(response, by=list(trt), FUN=sd)
+fit <- aov(response ~ trt)
+summary(fit)
+library(gplots)
+plotmeans(response ~ trt, xlab="Лечение", ylab="Эффект", 
+          main="Средние значения с 95%-ми доверительными интервалами")
+detach(cholesterol)
+
+TukeyHSD(fit)
+par(las=2)
+par(mar=c(5,8,4,2))
+plot(TukeyHSD(fit))
+
+library(multcomp)
+par(mar=c(5,4,6,2))
+tuk <- glht(fit, linfct=mcp(trt="Tukey"))
+plot(cld(tuk, level=.05),col="lightgrey")
